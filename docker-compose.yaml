@@ -1,24 +1,40 @@
 ---
 services:
-  jellyfin:
-    image: lscr.io/linuxserver/jellyfin:latest
-    container_name: jellyfin
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8080:8080 #qbit webui
+      - 6881:6881 # qbit torrent port
+      - 6789:6789 # nzbget
+      - 9696:9696 # prowlarr
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - ./media/gluetun:/gluetun
+    environment:
+      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_TYPE=wireguard
+      - WIREGUARD_PRIVATE_KEY=  #################
+    restart: unless-stopped
+
+   qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
     environment:
       - PUID=1000
       - PGID=1000
       - TZ=Etc/UTC
-      - DOCKER_MODS=linuxserver/mods:jellyfin-opencl-intel-24.35.30872.22
-      # - JELLYFIN_PublishedServerUrl=http://192.168.0.5 #optional
+      - WEBUI_PORT=8080
+      - TORRENTING_PORT=6881
     volumes:
-      - /media/library:/config
-      - /media/tv/:/tv
-      - /media/movies:/movies
-    ports:
-      - 8096:8096
-      - 8920:8920 #optional
-      - 7359:7359/udp #optional
-      - 1900:1900/udp #optional
+      - ./media/qbittorrent:/config
+      - /media/downloads:/downloads #optional
+      - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
+    network_mode: service:gluetun
 
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
@@ -28,38 +44,10 @@ services:
       - PGID=1000
       - TZ=Etc/UTC
     volumes:
-      - /path/to/prowlarr/data:/config
+      - ./media/prowlarr:/config
+      - /etc/localtime:/etc/localtime:ro
     ports:
       - 9696:9696
     restart: unless-stopped
+    network_mode: service:gluetun
     
-  sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
-    container_name: sonarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      - /path/to/sonarr/data:/config
-      - /path/to/tvseries:/tv #optional
-      - /path/to/downloadclient-downloads:/downloads #optional
-    ports:
-      - 8989:8989
-    restart: unless-stopped
-
-  radarr:
-    image: lscr.io/linuxserver/radarr:latest
-    container_name: radarr
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Etc/UTC
-    volumes:
-      - /path/to/radarr/data:/config
-      - /path/to/movies:/movies #optional
-      - /path/to/download-client-downloads:/downloads #optional
-    ports:
-      - 7878:7878
-    restart: unless-stopped
-
