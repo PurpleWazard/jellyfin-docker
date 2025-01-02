@@ -31,7 +31,7 @@ services:
       - TORRENTING_PORT=6881
     volumes:
       - ./media/qbittorrent:/config
-      - /media/downloads:/downloads #optional
+      - /aarr/downloads:/downloads #optional
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     network_mode: service:gluetun
@@ -58,8 +58,8 @@ services:
       - TZ=Etc/UTC
     volumes:
       - ./media/sonarr/:/config
-      - /media/tv:/tv #optional
-      - /media/downloads:/downloads #optional
+      - /aarr/tv:/tv #optional
+      - /aarr/downloads:/downloads #optional
     ports:
       - 8989:8989
     restart: unless-stopped 
