@@ -46,8 +46,6 @@ services:
     volumes:
       - ./media/prowlarr:/config
       - /etc/localtime:/etc/localtime:ro
-    ports:
-      - 9696:9696
     restart: unless-stopped
     network_mode: service:gluetun
     
