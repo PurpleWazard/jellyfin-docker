@@ -1,5 +1,5 @@
----
 services:
+
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
@@ -20,7 +20,7 @@ services:
       - WIREGUARD_PRIVATE_KEY=  #################
     restart: unless-stopped
 
-   qbittorrent:
+  qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
     container_name: qbittorrent
     environment:
