@@ -14,17 +14,14 @@ services:
       - /dev/net/tun:/dev/net/tun
     volumes:
       - ./media/gluetun:/gluetun
-      - type: bind
-          source: ./wg.conf
-          target: /gluetun/wireguard/wg0.conf
-          readonly: true
-          external: true
+      - ./wg.conf:/gluetun/wireguard/wg0.conf
+
     environment:
       - VPN_SERVICE_PROVIDER=custom
       - VPN_TYPE=wireguard
 
       - VPN_PORT_FORWARDING_PROVIDER=protonvpn
-      - VPN_PORT_FORWARDING=yes
+      - VPN_PORT_FORWARDING=on
       - VPN_PORT_FORWARDING_LISTENING_PORT=6881
 
       # - VPN_ENDPOINT_IP=
