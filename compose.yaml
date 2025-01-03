@@ -14,10 +14,24 @@ services:
       - /dev/net/tun:/dev/net/tun
     volumes:
       - ./media/gluetun:/gluetun
+      - type: bind
+          source: ./wg.conf
+          target: /gluetun/wireguard/wg0.conf
+          readonly: true
+          external: true
     environment:
-      - VPN_SERVICE_PROVIDER=protonvpn
+      - VPN_SERVICE_PROVIDER=custom
       - VPN_TYPE=wireguard
-      - WIREGUARD_PRIVATE_KEY=  #################
+
+      - VPN_PORT_FORWARDING_PROVIDER=protonvpn
+      - VPN_PORT_FORWARDING=yes
+      - VPN_PORT_FORWARDING_LISTENING_PORT=6881
+
+      # - VPN_ENDPOINT_IP=
+      # - VPN_ENDPOINT_PORT=
+      # - WIREGUARD_PUBLIC_KEY=
+      # - WIREGUARD_PRIVATE_KEY=
+      # - WIREGUARD_ADDRESSES=
     restart: unless-stopped
 
   qbittorrent:
